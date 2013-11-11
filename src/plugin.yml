@@ -1,0 +1,8 @@
+name: SnowAttack
+main: net.arcanerealm.snowattack.SnowAttack
+version: 0.1
+author: Kenny Williams
+website: http://arcanerealm.net
+description: An arena plugin
+
+depend: [VCore, VArenas, ZoneCore, ZoneWorld]
