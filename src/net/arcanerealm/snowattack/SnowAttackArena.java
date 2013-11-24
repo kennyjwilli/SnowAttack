@@ -86,23 +86,30 @@ public class SnowAttackArena extends Arena
         player.setHealth(6.0D);
         return getSpawnLocation(player);
     }
-
+    
+    @Override
+    public void onJoin(Player player)
+    {
+        super.onJoin(player);
+        player.teleport(getLobby().getSpawn());
+    }
+    
     @Override
     public void onQuit(PlayerQuitEvent event)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        super.onQuit(event);
     }
 
     @Override
     public void onBlockPlace(BlockPlaceEvent event)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        event.setCancelled(true);
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent event)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        event.setCancelled(true);
     }
 
     @Override
@@ -176,5 +183,4 @@ public class SnowAttackArena extends Arena
         p.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 1));
         p.updateInventory();
     }
-
 }
