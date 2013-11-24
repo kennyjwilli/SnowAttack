@@ -137,6 +137,7 @@ public class SnowAttackArena extends Arena
         {
             //hurt.setHealth(hurt.getHealth() - damage);
             hurt.setHealthScale(hurt.getHealthScale() - 2.0D);
+            setInvisible(hurt);
             hurt.teleport(ArenaManager.getAreanFramework(this.getMap()).getPoint3D("waiting").toLocation(getWorld().getCraftWorld()));
             
             //Teleports player to the waiting location for 5 seconds
@@ -148,6 +149,7 @@ public class SnowAttackArena extends Arena
                 {
                     //dead.setHealthScale(6.0D);
                     hurt.teleport(getSpawnLocation(hurt));
+                    setVisible(hurt);
                 }
             }, 100L);
         }
@@ -178,5 +180,27 @@ public class SnowAttackArena extends Arena
         
         p.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 1));
         p.updateInventory();
+    }
+    
+    private void setInvisible(Player p)
+    {
+        for(Player pl : getPlayers())
+        {
+            if(pl != p)
+            {
+                pl.hidePlayer(p);
+            }
+        }
+    }
+    
+    private void setVisible(Player p)
+    {
+        for(Player pl : getPlayers())
+        {
+            if(pl != p)
+            {
+                pl.showPlayer(p);
+            }
+        }
     }
 }
