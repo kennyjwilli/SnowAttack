@@ -27,18 +27,12 @@ public class SnowAttackArena extends Arena
     public SnowAttackArena(String name, String map, ZoneWorld world)
     {
         super(name, map, world);
-        world.setPVP(true);
     }
     
     @Override
     public void start()
     {
         super.start();
-        for(Player p : getPlayers())
-        {
-            p.setHealthScaled(true);
-            p.setHealthScale(6.0D);
-        }
     }
     
     @Override
@@ -92,6 +86,8 @@ public class SnowAttackArena extends Arena
     {
         super.onJoin(player);
         player.teleport(getLobby().getSpawn());
+        player.setHealthScaled(true);
+        player.setHealthScale(6.0D);
     }
     
     @Override
