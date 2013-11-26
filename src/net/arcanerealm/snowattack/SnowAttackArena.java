@@ -2,6 +2,7 @@
 package net.arcanerealm.snowattack;
 
 import info.jeppes.ZoneWorld.ZoneWorld;
+import net.vectorgaming.arenakits.KitManager;
 import net.vectorgaming.varenas.ArenaAPI;
 import net.vectorgaming.varenas.ArenaManager;
 import net.vectorgaming.varenas.framework.Arena;
@@ -24,6 +25,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class SnowAttackArena extends Arena
 {
+    private int KIT_TASK_ID;
+    
     public SnowAttackArena(String name, String map, ZoneWorld world)
     {
         super(name, map, world);
@@ -33,6 +36,18 @@ public class SnowAttackArena extends Arena
     public void start()
     {
         super.start();
+        
+        KIT_TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(SnowAttackAPI.getPlugin(), new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                for(Player p : getPlayers())
+                {
+                    getSpawnKit().giveKit(p, true);
+                }
+            }
+        }, 100L, 100L);
     }
     
     @Override
@@ -44,6 +59,7 @@ public class SnowAttackArena extends Arena
             p.setHealthScale(20D);
             p.setHealthScaled(false);
         }
+        Bukkit.getScheduler().cancelTask(KIT_TASK_ID);
     }
     
     @Override
@@ -55,6 +71,7 @@ public class SnowAttackArena extends Arena
             p.setHealthScale(20D);
             p.setHealthScaled(false);
         }
+        Bukkit.getScheduler().cancelTask(KIT_TASK_ID);
     }
 
     @Override
@@ -69,8 +86,10 @@ public class SnowAttackArena extends Arena
         System.out.println("DEAD"+dead.getName());
         ArenaAPI.resetPlayerState(dead);
         dead.teleport(getSpectatorBox().getSpawn());
+        dead.getInventory().clear();
         dead.sendMessage("You are out!");
         getSpectatorBox().addSpectator(dead.getName(), true);
+        
     }
 
     @Override
@@ -106,6 +125,12 @@ public class SnowAttackArena extends Arena
     public void onBlockBreak(BlockBreakEvent event)
     {
         event.setCancelled(true);
+    }
+    
+    @Override
+    public boolean canJoin(Player p)
+    {
+        return super.canJoin(p) && !isRunning();
     }
 
     @Override
@@ -178,8 +203,8 @@ public class SnowAttackArena extends Arena
             return;
         }
         
-        p.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 1));
-        p.updateInventory();
+//        p.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 1));
+//        p.updateInventory();
     }
     
     private void setInvisible(Player p)
