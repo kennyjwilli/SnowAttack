@@ -2,13 +2,12 @@
 package net.arcanerealm.snowattack;
 
 import info.jeppes.ZoneWorld.ZoneWorld;
-import net.vectorgaming.arenakits.KitManager;
+import java.util.ArrayList;
 import net.vectorgaming.varenas.ArenaAPI;
 import net.vectorgaming.varenas.ArenaManager;
 import net.vectorgaming.varenas.framework.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -17,7 +16,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -26,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 public class SnowAttackArena extends Arena
 {
     private int KIT_TASK_ID;
+    private ArrayList<Player> alivePlayers;
     
     public SnowAttackArena(String name, String map, ZoneWorld world)
     {
@@ -36,6 +35,7 @@ public class SnowAttackArena extends Arena
     public void start()
     {
         super.start();
+        alivePlayers = (ArrayList<Player>) getPlayers().clone();
         
         KIT_TASK_ID = Bukkit.getScheduler().scheduleSyncRepeatingTask(SnowAttackAPI.getPlugin(), new Runnable()
         {
@@ -60,6 +60,7 @@ public class SnowAttackArena extends Arena
             p.setHealthScaled(false);
         }
         Bukkit.getScheduler().cancelTask(KIT_TASK_ID);
+        reloadArena(10);
     }
     
     @Override
@@ -83,13 +84,26 @@ public class SnowAttackArena extends Arena
     @Override
     public void onDeath(Player dead, Entity killer)
     {
-        System.out.println("DEAD"+dead.getName());
         ArenaAPI.resetPlayerState(dead);
         dead.teleport(getSpectatorBox().getSpawn());
         dead.getInventory().clear();
         dead.sendMessage("You are out!");
         getSpectatorBox().addSpectator(dead.getName(), true);
-        
+        alivePlayers.remove(dead);
+        if(alivePlayers.size() == 1)
+        {
+            getChannel().sendChannelMessage("Game over! Player "+alivePlayers.get(0).getName()+" has won!");
+            getChannel().sendChannelMessage("Match closing in 10 seconds.");
+            Bukkit.getScheduler().scheduleSyncDelayedTask(SnowAttackAPI.getPlugin(), new Runnable()
+            {
+
+                @Override
+                public void run()
+                {
+                    end();
+                }
+            }, 200L);
+        }
     }
 
     @Override
