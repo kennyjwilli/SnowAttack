@@ -25,6 +25,7 @@ public class SnowAttackArena extends Arena
 {
     private int KIT_TASK_ID;
     private ArrayList<Player> alivePlayers;
+    private final ArrayList<Player> waiting = new ArrayList<>();
     
     public SnowAttackArena(String name, String map, ZoneWorld world)
     {
@@ -127,6 +128,10 @@ public class SnowAttackArena extends Arena
     public void onQuit(PlayerQuitEvent event)
     {
         super.onQuit(event);
+        if(waiting.contains(event.getPlayer()))
+        {
+            waiting.remove(event.getPlayer());
+        }
     }
 
     @Override
@@ -178,6 +183,7 @@ public class SnowAttackArena extends Arena
             hurt.setHealthScale(hurt.getHealthScale() - 2.0D);
             setInvisible(hurt);
             hurt.teleport(ArenaManager.getAreanFramework(this.getMap()).getPoint3D("waiting").toLocation(getWorld().getCraftWorld()));
+            waiting.add(hurt);
             
             //Teleports player to the waiting location for 5 seconds
             Bukkit.getScheduler().scheduleSyncDelayedTask(SnowAttackAPI.getPlugin(), new Runnable()
@@ -186,7 +192,7 @@ public class SnowAttackArena extends Arena
                 @Override
                 public void run()
                 {
-                    //dead.setHealthScale(6.0D);
+                    waiting.remove(hurt);
                     hurt.teleport(getSpawnLocation(hurt));
                     setVisible(hurt);
                 }
@@ -217,8 +223,10 @@ public class SnowAttackArena extends Arena
             return;
         }
         
-//        p.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 1));
-//        p.updateInventory();
+        if(waiting.contains(p))
+        {
+            event.setCancelled(true);
+        }
     }
     
     private void setInvisible(Player p)
