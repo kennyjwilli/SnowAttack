@@ -3,7 +3,6 @@ package net.arcanerealm.snowattack;
 
 import net.arcanerealm.snowattack.util.SLAPI;
 import net.vectorgaming.varenas.ArenaAPI;
-import net.vectorgaming.vcore.framework.VertexAPI;
 import net.vectorgaming.vcore.framework.VertexPlugin;
 import org.bukkit.plugin.Plugin;
 
@@ -39,11 +38,4 @@ public class SnowAttack extends VertexPlugin
     {
         return this;
     }
-
-    @Override
-    public VertexAPI getAPI()
-    {
-        return api;
-    }
-    
 }
