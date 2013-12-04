@@ -1,17 +1,23 @@
 
 package net.arcanerealm.snowattack;
 
-import net.vectorgaming.vcore.framework.VertexAPI;
+import net.vectorgaming.vcore.framework.VertexPlugin;
+
 
 /**
  *
  * @author Kenny
  */
-public class SnowAttackAPI extends VertexAPI
+public class SnowAttackAPI
 {
-    
+    private static VertexPlugin plugin;
     public SnowAttackAPI(SnowAttack instance)
     {
-        super(instance);
+        plugin = instance;
+    }
+    
+    public static VertexPlugin getPlugin()
+    {
+        return plugin;
     }
 }
